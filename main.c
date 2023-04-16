@@ -21,7 +21,7 @@ int main(void)
     SetTargetFPS(60);
     bool didGameStart = false;
 
-    // obstacle
+    // asteroid vars
     Asteroid asteroids[MAX_ASTEROIDS] = {0};
     int numAsteroids = 0;
 
@@ -54,12 +54,13 @@ int main(void)
         if (IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT)){
             px -= 2;
         }
-        if (IsKeyDown(KEY_SPACE) || IsKeyDown(KEY_W) || IsKeyDown(KEY_UP) && fuel > 0){
+        if (IsKeyDown(KEY_SPACE) && fuel > 0){
             g = 4;
             fuel -= 0.5;
             DrawText("*", px, py+10, 20, RED);
         }
 
+        // set asteroid location, size, speed
         if (numAsteroids < MAX_ASTEROIDS && GetRandomValue(0, 100) < 10) {
             asteroids[numAsteroids].rect.x = GetRandomValue(0, screenWidth - 50);
             asteroids[numAsteroids].rect.y = 0;
@@ -70,13 +71,13 @@ int main(void)
             numAsteroids++;
         }
 
-        for (int i = 0; i < numAsteroids; i++) {
+        /*for (int i = 0; i < numAsteroids; i++) {
             asteroids[i].rect.y += asteroids[i].speed.y;
-        }
+        }*/
 
         for (int i = 0; i < numAsteroids; i++) {
             asteroids[i].rect.y += asteroids[i].speed.y;
-
+            // check for asteroid collision
             if (CheckCollisionRecs(playerRect, asteroids[i].rect)) {
                 fuel -= 10;
                 asteroids[i].rect.y = 0;
@@ -84,7 +85,7 @@ int main(void)
             }
             // check if asteroid has gone past the bottom of the screen
             if (asteroids[i].rect.y > screenHeight) {
-                // respawn the asteroid at the top of the screen with a new random x-coordinate
+                // respawn the asteroid at the top of the screen with a new random x coord
                 asteroids[i].rect.y = 0;
                 asteroids[i].rect.x = GetRandomValue(0, screenWidth - 50);
             }
