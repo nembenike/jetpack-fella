@@ -2,6 +2,8 @@
 
 int main(void)
 {
+    SetConfigFlags(FLAG_MSAA_4X_HINT);
+
     const int screenWidth = 800;
     const int screenHeight = 450;
 
@@ -20,8 +22,11 @@ int main(void)
 
     int score = 0;
 
-    Rectangle playerRect = { px, py, 20, 20 };
-    Rectangle fuelRect = { GetRandomValue(0, screenWidth - 20), GetRandomValue(0, screenHeight - 20), 20, 20 };
+    Rectangle playerRect = { px, py, 20, 20 }; // player
+    Rectangle fuelRect = { GetRandomValue(0, screenWidth - 20), GetRandomValue(0, screenHeight - 20), 20, 20 }; // fuel
+    Rectangle fuelBarRect = { 15,15,20,100 };
+    Rectangle fuelBarBackground = { 10,10,30,110 };
+    float radius = 40;
 
     InitWindow(screenWidth, screenHeight, "jetpack fella");
 
@@ -57,10 +62,11 @@ int main(void)
 
             ClearBackground(BLACK);
 
-            DrawRectangle(10,10,30,110,DARKGRAY);
-            DrawRectangle(15,15,20,fuel,ORANGE);
+            fuelBarRect.height = fuel;
+            DrawRectangleRounded(fuelBarBackground, radius, 8, DARKGRAY);
+            DrawRectangleRounded(fuelBarRect, radius, 8, ORANGE);
 
-            DrawRectangle(fuelRect.x, fuelRect.y, fuelRect.width, fuelRect.height, RED);
+            DrawRectangle(fuelRect.x, fuelRect.y, fuelRect.width, fuelRect.height, ORANGE);
 
             DrawText("o", px, py, 20, WHITE);
             DrawText(TextFormat("Score: %i", score), 700, 10, 20, WHITE);
@@ -69,21 +75,31 @@ int main(void)
             DrawText(TextFormat("y: %d", py), 700, 30, 20, WHITE);
             DrawText(TextFormat("playing: %d", isPlaying), 700, 50, 20, WHITE);
             DrawText(TextFormat("fuel: %f", fuel), 700, 70, 20, WHITE); useless debug messages */
-
+            int endScore = score;
             if (isPlaying == false) {
+                
                 DrawRectangle(0,0,screenWidth,screenHeight,BLACK);
 
                 const char* text = "You Lost!";
                 const float textWidth = MeasureText(text, 50);
-                const float x = (screenWidth / 2.0f) - (textWidth / 2.0f);
+                const float textX = (screenWidth - textWidth) / 2.0f;
+                const float textY = (screenHeight - 150.0f) / 2.0f;
 
-                DrawText(text, x, screenHeight/2 - 25, 50, WHITE);
+                DrawText(text, textX, textY, 50, WHITE);
+
+                const char* scoreText = TextFormat("Your score was: %i", endScore);
+                const float scoreTextWidth = MeasureText(scoreText, 30);
+                const float scoreTextX = (screenWidth - scoreTextWidth) / 2.0f;
+                const float scoreTextY = textY + 70.0f;
+
+                DrawText(scoreText, scoreTextX, scoreTextY, 30, WHITE);
 
                 const char* replayText = "Press space to replay";
                 const float replayTextWidth = MeasureText(replayText, 30);
-                const float replayTextX = (screenWidth / 2.0f) - (replayTextWidth / 2.0f);
+                const float replayTextX = (screenWidth - replayTextWidth) / 2.0f;
+                const float replayTextY = scoreTextY + 50.0f;
 
-                DrawText(replayText, replayTextX, screenHeight/2 + 25, 30, WHITE);
+                DrawText(replayText, replayTextX, replayTextY, 30, WHITE);
 
                 if (IsKeyPressed(KEY_SPACE)) {
                     fuel = 100.0;
