@@ -23,10 +23,6 @@ int main(void)
     Rectangle playerRect = { px, py, 20, 20 };
     Rectangle fuelRect = { GetRandomValue(0, screenWidth - 20), GetRandomValue(0, screenHeight - 20), 20, 20 };
 
-    for (int i = 0; i <= 1000; i++) {
-        DrawText(".", GetRandomValue(0,screenWidth), GetRandomValue(0,screenHeight), 5, WHITE);       
-    }
-
     InitWindow(screenWidth, screenHeight, "jetpack fella");
 
     SetTargetFPS(60);
