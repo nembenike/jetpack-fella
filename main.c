@@ -28,6 +28,9 @@ int main(void)
     Rectangle fuelBarBackground = { 10,10,30,110 };
     float radius = 10;
 
+    // sounds
+    // TODO!! it no worky rn
+
     while (!WindowShouldClose())
     {
         // controls
@@ -73,7 +76,6 @@ int main(void)
             int endScore = score;
             // end game screen
             if (isPlaying == false) {
-                
                 DrawRectangle(0,0,screenWidth,screenHeight,BLACK);
 
                 const char* text = "You Lost!";
