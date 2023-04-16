@@ -35,7 +35,7 @@ int main(void)
     // fuel vars
     bool isFuelSpawned = false;
     double fuel = 100.0;
-    int fuelValue = 10;
+    int fuelValue = 15;
     int score = 0;
     Rectangle playerRect = { px, py, 20, 20 }; // player
     Rectangle fuelRect = { GetRandomValue(0, screenWidth - 20), GetRandomValue(0, screenHeight - 20), 20, 20 }; // fuel
@@ -52,14 +52,27 @@ int main(void)
     UnloadImage(asteroidImg);
     Rectangle asteroidTexRect = { 0, 0, asteroidTex.width, asteroidTex.height };
 
+    Image jerrycanImg = LoadImage("image/jerrycan.png");
+    ImageResize(&jerrycanImg, 25, 25);
+    Texture2D jerrycanTex = LoadTextureFromImage(jerrycanImg);
+    UnloadImage(jerrycanImg);
+
     while (!WindowShouldClose())
     {
         // controls
         if (IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT)){
-            px += 2;
+            if (IsKeyDown(KEY_LEFT_SHIFT)) {
+                px += 4;
+            } else {
+                px += 2;
+            }
         }
         if (IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT)){
-            px -= 2;
+            if (IsKeyDown(KEY_LEFT_SHIFT)) {
+                px -= 4;
+            } else {
+                px -= 2;
+            }
         }
         if (IsKeyDown(KEY_SPACE) && fuel > 0){
             g = 4;
@@ -128,7 +141,8 @@ int main(void)
             fuelBarRect.height = fuel;
             DrawRectangleRounded(fuelBarBackground, radius, 8, DARKGRAY);
             DrawRectangleRounded(fuelBarRect, radius, 8, ORANGE);
-            DrawRectangle(fuelRect.x, fuelRect.y, fuelRect.width, fuelRect.height, ORANGE);
+            // DrawRectangle(fuelRect.x, fuelRect.y, fuelRect.width, fuelRect.height, ORANGE);
+            DrawTexture(jerrycanTex, fuelRect.x, fuelRect.y, ORANGE);
             DrawText("o", px, py, 20, WHITE);
             for (int i = 0; i < numAsteroids; i++) {
                 // DrawRectangleRec(asteroids[i].rect, RED);
