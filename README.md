@@ -14,3 +14,5 @@ cd jetpack-fella
 make
 ./jetpack-fella
 ```
+
+#### i might approve small changes / improvements
