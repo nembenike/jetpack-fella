@@ -2,37 +2,35 @@
 
 int main(void)
 {
+    // anti aliasing
     SetConfigFlags(FLAG_MSAA_4X_HINT);
 
+    // window and game vars
     const int screenWidth = 800;
     const int screenHeight = 450;
+    InitWindow(screenWidth, screenHeight, "jetpack fella");
+    SetTargetFPS(60);
 
+    // player vars
     int px = screenWidth/2;
     int py = screenHeight/2;
-
-    bool isFuelSpawned = false;
-    
+    double g = 0;
     bool isPlaying = true;
 
-    double g = 0;
-
+    // fuel vars
+    bool isFuelSpawned = false;
     double fuel = 100.0;
-
     int fuelValue = 10;
-
     int score = 0;
-
     Rectangle playerRect = { px, py, 20, 20 }; // player
     Rectangle fuelRect = { GetRandomValue(0, screenWidth - 20), GetRandomValue(0, screenHeight - 20), 20, 20 }; // fuel
     Rectangle fuelBarRect = { 15,15,20,100 };
     Rectangle fuelBarBackground = { 10,10,30,110 };
     float radius = 10;
 
-    InitWindow(screenWidth, screenHeight, "jetpack fella");
-
-    SetTargetFPS(60);
     while (!WindowShouldClose())
     {
+        // controls
         if (IsKeyDown(KEY_RIGHT)){
             px += 2;
         }
@@ -45,9 +43,11 @@ int main(void)
             DrawText("*", px, py+10, 20, RED);
         }
 
+        // update player rect
         playerRect.x = px;
         playerRect.y = py;
 
+        // player x fuel collision
         if (CheckCollisionRecs(playerRect, fuelRect)) {
             if (fuel + fuelValue <= 100) {
                 fuel += fuelValue;
@@ -57,25 +57,21 @@ int main(void)
             isFuelSpawned = false;
             score++;
         }
-
+        // drawing game elements
         BeginDrawing();
-
             ClearBackground(BLACK);
-
             fuelBarRect.height = fuel;
             DrawRectangleRounded(fuelBarBackground, radius, 8, DARKGRAY);
             DrawRectangleRounded(fuelBarRect, radius, 8, ORANGE);
-
             DrawRectangle(fuelRect.x, fuelRect.y, fuelRect.width, fuelRect.height, ORANGE);
-
             DrawText("o", px, py, 20, WHITE);
             DrawText(TextFormat("Score: %i", score), 700, 10, 20, WHITE);
-
             /* DrawText(TextFormat("x: %d", px), 700, 10, 20, WHITE);
             DrawText(TextFormat("y: %d", py), 700, 30, 20, WHITE);
             DrawText(TextFormat("playing: %d", isPlaying), 700, 50, 20, WHITE);
             DrawText(TextFormat("fuel: %f", fuel), 700, 70, 20, WHITE); useless debug messages */
             int endScore = score;
+            // end game screen
             if (isPlaying == false) {
                 
                 DrawRectangle(0,0,screenWidth,screenHeight,BLACK);
@@ -113,24 +109,26 @@ int main(void)
 
         EndDrawing();
 
+        // gravitation
         py -= g;
         g -= 0.17;
 
+        // wrapping player position on sides
         if (px > screenWidth) {
             px = 0;
         }
         else if (px < 0) {
             px = screenWidth;
         }
-
+        // not letting player escape on top
         if (py <= 0) {
             py = 0;
         }
-
+        // lose if touching the bottom
         if (py > screenHeight) {
             isPlaying = false;
         }
-
+        // change fuel pos
         if (!isFuelSpawned) {
             fuelRect.x = GetRandomValue(50, screenWidth - 20);
             fuelRect.y = GetRandomValue(20, screenHeight - 50);
