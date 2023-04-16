@@ -86,7 +86,7 @@ int main(void)
         for (int i = 0; i < numAsteroids; i++) {
             asteroids[i].rect.y += asteroids[i].speed.y;
             // check for asteroid collision
-            if (CheckCollisionRecs(playerRect, asteroids[i].rect)) {
+            if (CheckCollisionRecs(playerRect, (Rectangle){asteroids[i].rect.x, asteroids[i].rect.y, asteroids[i].rect.width/2, asteroids[i].rect.height/2})){
                 fuel -= asteroids[i].rect.width/3;
                 asteroids[i].rect.y = 0;
                 asteroids[i].rect.x = GetRandomValue(0, screenWidth - 50);
