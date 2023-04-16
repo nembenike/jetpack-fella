@@ -2,7 +2,7 @@
 #include "raymath.h"
 #include <math.h>
 
-#define MAX_ASTEROIDS 10
+#define MAX_ASTEROIDS 7
 
 typedef struct {
     Rectangle rect;
@@ -79,11 +79,12 @@ int main(void)
             fuel -= 0.5;
             DrawText("*", px, py+10, 20, RED);
         }
+        
 
         // set asteroid location, size, speed
-        if (numAsteroids < MAX_ASTEROIDS && GetRandomValue(0, 100) < 10 && score >= 5) {
+        if (numAsteroids < MAX_ASTEROIDS && GetRandomValue(0, 100) < 10 && score >= 3) {
             asteroids[numAsteroids].rect.x = GetRandomValue(0, screenWidth - 50);
-            asteroids[numAsteroids].rect.y = 0;
+            asteroids[numAsteroids].rect.y = -20;
             asteroids[numAsteroids].rect.width = GetRandomValue(15,30);
             asteroids[numAsteroids].rect.height = asteroids[numAsteroids].rect.width;
             asteroids[numAsteroids].speed.x = 0;
@@ -103,7 +104,11 @@ int main(void)
                 fuel -= asteroids[i].rect.width/3;
                 asteroids[i].rect.y = 0;
                 asteroids[i].rect.x = GetRandomValue(0, screenWidth - 50);
-                asteroids[i].rect.width = GetRandomValue(15, score*3);
+                if (asteroids[i].rect.width<25) {
+                    asteroids[i].rect.width = 25;
+                } else {
+                    asteroids[i].rect.width = GetRandomValue(15, score*3);
+                }
                 asteroids[i].speed.y = 80/asteroids[i].rect.width;
                 asteroids[i].rect.height = asteroids[i].rect.width;
                 asteroids[i].rotation = GetRandomValue(0,360);
