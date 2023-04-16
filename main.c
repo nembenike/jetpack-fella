@@ -7,6 +7,7 @@
 typedef struct {
     Rectangle rect;
     Vector2 speed;
+    float rotation;
 } Asteroid;
 
 int main(void)
@@ -74,6 +75,7 @@ int main(void)
             asteroids[numAsteroids].rect.height = asteroids[numAsteroids].rect.width;
             asteroids[numAsteroids].speed.x = 0;
             asteroids[numAsteroids].speed.y = GetRandomValue(1, 3);
+            asteroids[numAsteroids].rotation = GetRandomValue(0,360);
             numAsteroids++;
         }
 
@@ -91,12 +93,17 @@ int main(void)
                 asteroids[i].rect.width = GetRandomValue(15, score*3);
                 asteroids[i].speed.y = 80/asteroids[i].rect.width;
                 asteroids[i].rect.height = asteroids[i].rect.width;
+                asteroids[i].rotation = GetRandomValue(0,360);
             }
             // check if asteroid has gone past the bottom of the screen
             if (asteroids[i].rect.y > screenHeight) {
                 // respawn the asteroid at the top of the screen with a new random x coord
                 asteroids[i].rect.y = 0;
                 asteroids[i].rect.x = GetRandomValue(0, screenWidth - 50);
+                asteroids[i].rect.width = GetRandomValue(15, score*3);
+                asteroids[i].speed.y = 80/asteroids[i].rect.width;
+                asteroids[i].rect.height = asteroids[i].rect.width;
+                asteroids[i].rotation = GetRandomValue(0,360);
             }
         }
         
@@ -125,7 +132,7 @@ int main(void)
             DrawText("o", px, py, 20, WHITE);
             for (int i = 0; i < numAsteroids; i++) {
                 // DrawRectangleRec(asteroids[i].rect, RED);
-                DrawTexturePro(asteroidTex, asteroidTexRect, asteroids[i].rect, (Vector2){0, 0}, 0.0f, WHITE);
+                DrawTexturePro(asteroidTex, asteroidTexRect, asteroids[i].rect, (Vector2){0, 0}, asteroids[i].rotation, WHITE);
             }
             DrawText(TextFormat("Score: %i", score), 700, 10, 20, WHITE);
             /* DrawText(TextFormat("x: %d", px), 700, 10, 20, WHITE);
@@ -165,6 +172,7 @@ int main(void)
                     py = screenHeight / 2;
                     isPlaying = true;
                     score = 0;
+                    numAsteroids = 0;
                     if (numAsteroids < MAX_ASTEROIDS && GetRandomValue(0, 100) < 10 && score >= 5) {
                         asteroids[numAsteroids].rect.x = GetRandomValue(0, screenWidth - 50);
                         asteroids[numAsteroids].rect.y = 0;
@@ -172,6 +180,7 @@ int main(void)
                         asteroids[numAsteroids].rect.height = asteroids[numAsteroids].rect.width;
                         asteroids[numAsteroids].speed.x = 0;
                         asteroids[numAsteroids].speed.y = GetRandomValue(1, 3);
+                        asteroids[numAsteroids].rotation = GetRandomValue(0,360);
                         numAsteroids++;
                     }
                 }
