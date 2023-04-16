@@ -14,5 +14,10 @@ cd jetpack-fella
 make
 ./jetpack-fella
 ```
+### TODO:
+- Add upgrades
+- Add store
+- Maybe add some more sprites
+- Add build option for windows (someone pr :3)
 
 #### i might approve small changes / improvements
