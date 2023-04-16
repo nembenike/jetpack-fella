@@ -26,7 +26,7 @@ int main(void)
     Rectangle fuelRect = { GetRandomValue(0, screenWidth - 20), GetRandomValue(0, screenHeight - 20), 20, 20 }; // fuel
     Rectangle fuelBarRect = { 15,15,20,100 };
     Rectangle fuelBarBackground = { 10,10,30,110 };
-    float radius = 40;
+    float radius = 10;
 
     InitWindow(screenWidth, screenHeight, "jetpack fella");
 
@@ -42,7 +42,7 @@ int main(void)
         if (IsKeyDown(KEY_SPACE) && fuel > 0){
             g = 4;
             fuel -= 0.5;
-            DrawText("*", px, py+5, 20, RED);
+            DrawText("*", px, py+10, 20, RED);
         }
 
         playerRect.x = px;
@@ -137,7 +137,6 @@ int main(void)
             isFuelSpawned = true;
         }
     }
-
     CloseWindow();
 
     return 0;
