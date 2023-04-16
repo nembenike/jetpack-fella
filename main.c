@@ -2,7 +2,7 @@
 #include "raymath.h"
 #include <math.h>
 
-#define MAX_ASTEROIDS 5
+#define MAX_ASTEROIDS 10
 
 typedef struct {
     Rectangle rect;
@@ -20,7 +20,7 @@ int main(void)
     InitWindow(screenWidth, screenHeight, "jetpack fella");
     SetTargetFPS(60);
     bool didGameStart = false;
-
+    
     // asteroid vars
     Asteroid asteroids[MAX_ASTEROIDS] = {0};
     int numAsteroids = 0;
@@ -61,11 +61,11 @@ int main(void)
         }
 
         // set asteroid location, size, speed
-        if (numAsteroids < MAX_ASTEROIDS && GetRandomValue(0, 100) < 10) {
+        if (numAsteroids < MAX_ASTEROIDS && GetRandomValue(0, 100) < 10 && score >= 5) {
             asteroids[numAsteroids].rect.x = GetRandomValue(0, screenWidth - 50);
             asteroids[numAsteroids].rect.y = 0;
-            asteroids[numAsteroids].rect.width = 50;
-            asteroids[numAsteroids].rect.height = 50;
+            asteroids[numAsteroids].rect.width = GetRandomValue(15,30);
+            asteroids[numAsteroids].rect.height = asteroids[numAsteroids].rect.width;
             asteroids[numAsteroids].speed.x = 0;
             asteroids[numAsteroids].speed.y = GetRandomValue(1, 3);
             numAsteroids++;
@@ -74,14 +74,17 @@ int main(void)
         /*for (int i = 0; i < numAsteroids; i++) {
             asteroids[i].rect.y += asteroids[i].speed.y;
         }*/
-
+        int baseSpeed = asteroids[numAsteroids].speed.y;
         for (int i = 0; i < numAsteroids; i++) {
             asteroids[i].rect.y += asteroids[i].speed.y;
             // check for asteroid collision
             if (CheckCollisionRecs(playerRect, asteroids[i].rect)) {
-                fuel -= 10;
+                fuel -= asteroids[i].rect.width/3;
                 asteroids[i].rect.y = 0;
                 asteroids[i].rect.x = GetRandomValue(0, screenWidth - 50);
+                asteroids[i].rect.width = GetRandomValue(15, score*3);
+                asteroids[i].speed.y = 80/asteroids[i].rect.width;
+                asteroids[i].rect.height = asteroids[i].rect.width;
             }
             // check if asteroid has gone past the bottom of the screen
             if (asteroids[i].rect.y > screenHeight) {
@@ -90,6 +93,7 @@ int main(void)
                 asteroids[i].rect.x = GetRandomValue(0, screenWidth - 50);
             }
         }
+        
 
         // update player rect
         playerRect.x = px;
@@ -154,6 +158,15 @@ int main(void)
                     py = screenHeight / 2;
                     isPlaying = true;
                     score = 0;
+                    if (numAsteroids < MAX_ASTEROIDS && GetRandomValue(0, 100) < 10 && score >= 5) {
+                        asteroids[numAsteroids].rect.x = GetRandomValue(0, screenWidth - 50);
+                        asteroids[numAsteroids].rect.y = 0;
+                        asteroids[numAsteroids].rect.width = GetRandomValue(10,25);
+                        asteroids[numAsteroids].rect.height = asteroids[numAsteroids].rect.width;
+                        asteroids[numAsteroids].speed.x = 0;
+                        asteroids[numAsteroids].speed.y = GetRandomValue(1, 3);
+                        numAsteroids++;
+                    }
                 }
             }
 
