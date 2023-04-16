@@ -18,8 +18,14 @@ int main(void)
 
     int fuelValue = 10;
 
+    int score = 0;
+
     Rectangle playerRect = { px, py, 20, 20 };
     Rectangle fuelRect = { GetRandomValue(0, screenWidth - 20), GetRandomValue(0, screenHeight - 20), 20, 20 };
+
+    for (int i = 0; i <= 1000; i++) {
+        DrawText(".", GetRandomValue(0,screenWidth), GetRandomValue(0,screenHeight), 5, WHITE);       
+    }
 
     InitWindow(screenWidth, screenHeight, "jetpack fella");
 
@@ -33,7 +39,7 @@ int main(void)
             px -= 2;
         }
         if (IsKeyDown(KEY_SPACE) && fuel > 0){
-            g = 5;
+            g = 4;
             fuel -= 0.5;
             DrawText("*", px, py+5, 20, RED);
         }
@@ -48,18 +54,20 @@ int main(void)
                 fuel = 100;
             }
             isFuelSpawned = false;
+            score++;
         }
 
         BeginDrawing();
 
-            ClearBackground(GRAY);
+            ClearBackground(BLACK);
 
-            DrawRectangle(10,10,30,110,BLACK);
-            DrawRectangle(15,15,20,fuel,GREEN);
+            DrawRectangle(10,10,30,110,DARKGRAY);
+            DrawRectangle(15,15,20,fuel,ORANGE);
 
             DrawRectangle(fuelRect.x, fuelRect.y, fuelRect.width, fuelRect.height, RED);
 
             DrawText("o", px, py, 20, WHITE);
+            DrawText(TextFormat("Score: %i", score), 700, 10, 20, WHITE);
 
             /* DrawText(TextFormat("x: %d", px), 700, 10, 20, WHITE);
             DrawText(TextFormat("y: %d", py), 700, 30, 20, WHITE);
@@ -87,13 +95,14 @@ int main(void)
                     px = screenWidth / 2;
                     py = screenHeight / 2;
                     isPlaying = true;
+                    score = 0;
                 }
             }
 
         EndDrawing();
 
         py -= g;
-        g -= 0.2;
+        g -= 0.17;
 
         if (px > screenWidth) {
             px = 0;
