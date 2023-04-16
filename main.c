@@ -1,4 +1,13 @@
 #include "raylib.h"
+#include "raymath.h"
+#include <math.h>
+
+#define MAX_ASTEROIDS 5
+
+typedef struct {
+    Rectangle rect;
+    Vector2 speed;
+} Asteroid;
 
 int main(void)
 {
@@ -10,6 +19,11 @@ int main(void)
     const int screenHeight = 450;
     InitWindow(screenWidth, screenHeight, "jetpack fella");
     SetTargetFPS(60);
+    bool didGameStart = false;
+
+    // obstacle
+    Asteroid asteroids[MAX_ASTEROIDS] = {0};
+    int numAsteroids = 0;
 
     // player vars
     int px = screenWidth/2;
@@ -34,16 +48,46 @@ int main(void)
     while (!WindowShouldClose())
     {
         // controls
-        if (IsKeyDown(KEY_RIGHT)){
+        if (IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT)){
             px += 2;
         }
-        if (IsKeyDown(KEY_LEFT)){
+        if (IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT)){
             px -= 2;
         }
-        if (IsKeyDown(KEY_SPACE) && fuel > 0){
+        if (IsKeyDown(KEY_SPACE) || IsKeyDown(KEY_W) || IsKeyDown(KEY_UP) && fuel > 0){
             g = 4;
             fuel -= 0.5;
             DrawText("*", px, py+10, 20, RED);
+        }
+
+        if (numAsteroids < MAX_ASTEROIDS && GetRandomValue(0, 100) < 10) {
+            asteroids[numAsteroids].rect.x = GetRandomValue(0, screenWidth - 50);
+            asteroids[numAsteroids].rect.y = 0;
+            asteroids[numAsteroids].rect.width = 50;
+            asteroids[numAsteroids].rect.height = 50;
+            asteroids[numAsteroids].speed.x = 0;
+            asteroids[numAsteroids].speed.y = GetRandomValue(1, 3);
+            numAsteroids++;
+        }
+
+        for (int i = 0; i < numAsteroids; i++) {
+            asteroids[i].rect.y += asteroids[i].speed.y;
+        }
+
+        for (int i = 0; i < numAsteroids; i++) {
+            asteroids[i].rect.y += asteroids[i].speed.y;
+
+            if (CheckCollisionRecs(playerRect, asteroids[i].rect)) {
+                fuel -= 10;
+                asteroids[i].rect.y = 0;
+                asteroids[i].rect.x = GetRandomValue(0, screenWidth - 50);
+            }
+            // check if asteroid has gone past the bottom of the screen
+            if (asteroids[i].rect.y > screenHeight) {
+                // respawn the asteroid at the top of the screen with a new random x-coordinate
+                asteroids[i].rect.y = 0;
+                asteroids[i].rect.x = GetRandomValue(0, screenWidth - 50);
+            }
         }
 
         // update player rect
@@ -68,6 +112,9 @@ int main(void)
             DrawRectangleRounded(fuelBarRect, radius, 8, ORANGE);
             DrawRectangle(fuelRect.x, fuelRect.y, fuelRect.width, fuelRect.height, ORANGE);
             DrawText("o", px, py, 20, WHITE);
+            for (int i = 0; i < numAsteroids; i++) {
+                DrawRectangleRec(asteroids[i].rect, RED);
+            }
             DrawText(TextFormat("Score: %i", score), 700, 10, 20, WHITE);
             /* DrawText(TextFormat("x: %d", px), 700, 10, 20, WHITE);
             DrawText(TextFormat("y: %d", py), 700, 30, 20, WHITE);
@@ -107,6 +154,26 @@ int main(void)
                     isPlaying = true;
                     score = 0;
                 }
+            }
+
+            // main menu
+            if (!didGameStart) {
+                DrawRectangle(0,0,screenWidth,screenHeight,BLACK);
+                const char* menuText = "jetpack fella";
+                const float menuTextWidth = MeasureText(menuText, 50);
+                const float menuTextX = (screenWidth - menuTextWidth) / 2.0f;
+                const float menuTextY = (screenHeight - 150.0f) / 2.0f;
+
+                DrawText(menuText, menuTextX, menuTextY, 50, WHITE);
+
+                const char* spaceText = "space to play";
+                const float spaceTextWidth = MeasureText(spaceText, 30);
+                const float spaceTextX = (screenWidth - spaceTextWidth) / 2.0f;
+                const float spaceTextY = menuTextY + 75.0f;
+
+                DrawText(spaceText, spaceTextX, spaceTextY, 30, WHITE);
+
+                if (IsKeyPressed(KEY_SPACE)) didGameStart = true;
             }
 
         EndDrawing();
