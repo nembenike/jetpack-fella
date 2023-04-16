@@ -45,6 +45,12 @@ int main(void)
     // sounds
     // TODO!! it no worky rn
 
+    // texture
+    Image asteroidImg = LoadImage("image/asteroid.png");
+    Texture2D asteroidTex = LoadTextureFromImage(asteroidImg);
+    UnloadImage(asteroidImg);
+    Rectangle asteroidTexRect = { 0, 0, asteroidTex.width, asteroidTex.height };
+
     while (!WindowShouldClose())
     {
         // controls
@@ -118,7 +124,8 @@ int main(void)
             DrawRectangle(fuelRect.x, fuelRect.y, fuelRect.width, fuelRect.height, ORANGE);
             DrawText("o", px, py, 20, WHITE);
             for (int i = 0; i < numAsteroids; i++) {
-                DrawRectangleRec(asteroids[i].rect, RED);
+                // DrawRectangleRec(asteroids[i].rect, RED);
+                DrawTexturePro(asteroidTex, asteroidTexRect, asteroids[i].rect, (Vector2){0, 0}, 0.0f, WHITE);
             }
             DrawText(TextFormat("Score: %i", score), 700, 10, 20, WHITE);
             /* DrawText(TextFormat("x: %d", px), 700, 10, 20, WHITE);
