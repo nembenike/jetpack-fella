@@ -1,6 +1,5 @@
 #include "raylib.h"
 #include "raymath.h"
-#include <math.h>
 
 #define MAX_ASTEROIDS 7
 
