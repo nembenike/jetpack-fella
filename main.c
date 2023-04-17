@@ -7,6 +7,7 @@ typedef struct {
     Rectangle rect;
     Vector2 speed;
     float rotation;
+    Rectangle hitbox;
 } Asteroid;
 
 int main(void)
@@ -106,18 +107,18 @@ int main(void)
         for (int i = 0; i < numAsteroids; i++) {
             asteroids[i].rect.y += asteroids[i].speed.y;
             // check for asteroid collision
-            if (CheckCollisionRecs(playerRect, (Rectangle){asteroids[i].rect.x, asteroids[i].rect.y, asteroids[i].rect.width/2, asteroids[i].rect.height/2})){
+            asteroids[i].hitbox = (Rectangle){ asteroids[i].rect.x + asteroids[i].rect.width * 0.25f,
+                                   asteroids[i].rect.y + asteroids[i].rect.height * 0.25f,
+                                   asteroids[i].rect.width * 0.5f,
+                                   asteroids[i].rect.height * 0.5f };
+            if (CheckCollisionRecs(playerRect, asteroids[i].hitbox)){
                 fuel -= asteroids[i].rect.width/3;
                 asteroids[i].rect.y = 0;
                 asteroids[i].rect.x = GetRandomValue(0, screenWidth - 50);
-                if (asteroids[i].rect.width<25) {
-                    asteroids[i].rect.width = 25;
-                } else {
-                    asteroids[i].rect.width = GetRandomValue(15, score*3);
-                }
+                asteroids[i].rect.width = GetRandomValue(15, score*3);
                 asteroids[i].speed.y = 80/asteroids[i].rect.width;
                 asteroids[i].rect.height = asteroids[i].rect.width;
-                asteroids[i].rotation = GetRandomValue(0,360);
+                // asteroids[i].rotation = GetRandomValue(0,360);
             }
             // check if asteroid has gone past the bottom of the screen
             if (asteroids[i].rect.y > screenHeight) {
@@ -127,7 +128,7 @@ int main(void)
                 asteroids[i].rect.width = GetRandomValue(15, score*3);
                 asteroids[i].speed.y = 80/asteroids[i].rect.width;
                 asteroids[i].rect.height = asteroids[i].rect.width;
-                asteroids[i].rotation = GetRandomValue(0,360);
+                // asteroids[i].rotation = GetRandomValue(0,360);
             }
         }
         
@@ -178,7 +179,7 @@ int main(void)
             DrawText("o", px, py, 20, WHITE);
             for (int i = 0; i < numAsteroids; i++) {
                 // DrawRectangleRec(asteroids[i].rect, RED);
-                DrawTexturePro(asteroidTex, asteroidTexRect, asteroids[i].rect, (Vector2){0, 0}, asteroids[i].rotation, WHITE);
+                DrawTexturePro(asteroidTex, asteroidTexRect, asteroids[i].rect, (Vector2){0, 0}, 0, WHITE);
             }
             DrawText(TextFormat("Score: %i", score), 700, 10, 20, WHITE);
             /* DrawText(TextFormat("x: %d", px), 700, 10, 20, WHITE);
@@ -226,7 +227,7 @@ int main(void)
                         asteroids[numAsteroids].rect.height = asteroids[numAsteroids].rect.width;
                         asteroids[numAsteroids].speed.x = 0;
                         asteroids[numAsteroids].speed.y = GetRandomValue(1, 3);
-                        asteroids[numAsteroids].rotation = GetRandomValue(0,360);
+                        // asteroids[numAsteroids].rotation = GetRandomValue(0,360);
                         numAsteroids++;
                     }
                 }
