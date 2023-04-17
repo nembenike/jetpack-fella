@@ -163,7 +163,7 @@ int main(void)
             DrawRectangleRounded(fuelBarRect, radius, 8, ORANGE);
             DrawTexture(jerrycanTex, fuelRect.x, fuelRect.y, ORANGE);
 
-            if (score % 10 == 0 && !isUpgradeSpawned) {
+            if (score > 0 && score % 10 == 0 && !isUpgradeSpawned) {
                 upgradeRect.x = GetRandomValue(0, screenWidth-20);
                 upgradeRect.y = GetRandomValue(0, screenHeight-20);
                 DrawRectangleRounded(upgradeRect, 8, 0, GREEN);
