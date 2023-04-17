@@ -21,7 +21,8 @@ int main(void)
     InitWindow(screenWidth, screenHeight, "jetpack fella");
     SetTargetFPS(60);
     bool didGameStart = false;
-    
+    bool isSpaceDown = false;
+
     // asteroid vars
     Asteroid asteroids[MAX_ASTEROIDS] = {0};
     int numAsteroids = 0;
@@ -31,6 +32,7 @@ int main(void)
     int py = screenHeight/2;
     double g = 0;
     bool isPlaying = true;
+    bool isJetpacking = false;
 
     // fuel vars
     bool isFuelSpawned = false;
@@ -42,7 +44,7 @@ int main(void)
     Rectangle fuelBarRect = { 15,15,20,100 };
     Rectangle fuelBarBackground = { 10,10,30,110 };
     float radius = 10;
-    
+
     // upgrade vars
     bool isUpgradeSpawned = false;
     bool isUpgradeCollected = false;
@@ -52,7 +54,9 @@ int main(void)
 
     // sounds
     InitAudioDevice();
-    Sound rocketFx = LoadSound("audio/rocket.mp3");
+    Sound rocketFx = LoadSound("sound/rocket.mp3");
+    Sound hitFx = LoadSound("sound/hit.mp3");
+    Sound collectFx = LoadSound("sound/collect.mp3");
 
     // texture
     Image asteroidImg = LoadImage("image/asteroid.png");
@@ -82,20 +86,30 @@ int main(void)
                 px -= 2;
             }
         }
-        if (IsKeyDown(KEY_SPACE) && !IsKeyDown(KEY_S) && fuel > 0){
-            g = 4;
-            fuel -= 0.5;
-            DrawText("*", px, py+10, 20, RED);
-            PlaySound(rocketFx);
-        }
-
-        if (IsKeyDown(KEY_SPACE) && IsKeyDown(KEY_S) && fuel > 0) {
-            g = -4;
-            fuel -= 0.5;
-            DrawText("*", px, py-10, 20, RED);
-            PlaySound(rocketFx);
-        }
         
+        if (IsKeyDown(KEY_SPACE) && isPlaying && fuel > 0) {
+            if (IsKeyDown(KEY_S)) {
+                g = -4;
+                DrawText("*", px, py-10, 20, RED);
+                if (!isSpaceDown) {
+                    PlaySound(rocketFx);
+                    isSpaceDown = true;
+                }
+            } else {
+                g = 4;
+                DrawText("*", px, py+10, 20, RED);
+                if (!isSpaceDown) {
+                    PlaySound(rocketFx);
+                    isSpaceDown = true;
+                }
+            }
+            fuel -= 0.5;
+        } else {
+            if (isSpaceDown) {
+                StopSound(rocketFx);
+                isSpaceDown = false;
+            }
+        }
 
         // set asteroid location, size, speed
         if (numAsteroids < MAX_ASTEROIDS && GetRandomValue(0, 100) < 10 && score >= 3) {
@@ -121,6 +135,7 @@ int main(void)
                                    asteroids[i].rect.width * 0.5f,
                                    asteroids[i].rect.height * 0.5f };
             if (CheckCollisionRecs(playerRect, asteroids[i].hitbox)){
+                PlaySound(hitFx);
                 if (fuel - asteroids[i].rect.width/3 > 0) {
                     fuel -= asteroids[i].rect.width/3;
                 } else {
@@ -144,7 +159,7 @@ int main(void)
                 // asteroids[i].rotation = GetRandomValue(0,360);
             }
         }
-        
+
 
         // update player rect
         playerRect.x = px;
@@ -152,6 +167,7 @@ int main(void)
 
         // player x fuel collision
         if (CheckCollisionRecs(playerRect, fuelRect)) {
+            PlaySound(collectFx);
             if (fuel + fuelValue <= maxFuel) {
                 fuel += fuelValue;
             } else if (fuel + fuelValue >= maxFuel) {
@@ -248,6 +264,7 @@ int main(void)
 
             // main menu
             if (!didGameStart) {
+		isPlaying = false;
                 DrawRectangle(0,0,screenWidth,screenHeight,BLACK);
                 const char* menuText = "jetpack fella";
                 const float menuTextWidth = MeasureText(menuText, 50);
@@ -263,7 +280,10 @@ int main(void)
 
                 DrawText(spaceText, spaceTextX, spaceTextY, 30, WHITE);
 
-                if (IsKeyPressed(KEY_SPACE)) didGameStart = true;
+                if (IsKeyPressed(KEY_SPACE)){
+		    isPlaying = true;
+		    didGameStart = true;
+		}
             }
         int fps = GetFPS();
         DrawText(TextFormat("fps: %i", fps), screenWidth-100, 30, 20, WHITE);
