@@ -41,6 +41,13 @@ int main(void)
     Rectangle fuelBarRect = { 15,15,20,100 };
     Rectangle fuelBarBackground = { 10,10,30,110 };
     float radius = 10;
+    
+    // upgrade vars
+    bool isUpgradeSpawned = false;
+    bool isUpgradeCollected = false;
+    int maxFuel = 100;
+    int addedFuel = 10;
+    Rectangle upgradeRect = { GetRandomValue(0, screenWidth-20), GetRandomValue(0, screenHeight-20), 20, 20 }; //upgrade
 
     // sounds
     // TODO!! it no worky rn
@@ -131,22 +138,43 @@ int main(void)
 
         // player x fuel collision
         if (CheckCollisionRecs(playerRect, fuelRect)) {
-            if (fuel + fuelValue <= 100) {
+            if (fuel + fuelValue <= maxFuel) {
                 fuel += fuelValue;
-            } else if (fuel + fuelValue >= 100) {
-                fuel = 100;
+            } else if (fuel + fuelValue >= maxFuel) {
+                fuel = maxFuel;
             }
             isFuelSpawned = false;
             score++;
+        }
+
+        if (CheckCollisionRecs(playerRect, upgradeRect) && !isUpgradeCollected) {
+            maxFuel += addedFuel;
+            fuel += 5;
+            score++;
+            isUpgradeCollected = true;
+            isUpgradeSpawned = false;
         }
         // drawing game elements
         BeginDrawing();
             ClearBackground(BLACK);
             fuelBarRect.height = fuel;
+            fuelBarBackground.height = maxFuel+10;
             DrawRectangleRounded(fuelBarBackground, radius, 8, DARKGRAY);
             DrawRectangleRounded(fuelBarRect, radius, 8, ORANGE);
-            // DrawRectangle(fuelRect.x, fuelRect.y, fuelRect.width, fuelRect.height, ORANGE);
             DrawTexture(jerrycanTex, fuelRect.x, fuelRect.y, ORANGE);
+
+            if (score % 10 == 0 && !isUpgradeSpawned) {
+                upgradeRect.x = GetRandomValue(0, screenWidth-20);
+                upgradeRect.y = GetRandomValue(0, screenHeight-20);
+                DrawRectangleRounded(upgradeRect, 8, 0, GREEN);
+                isUpgradeSpawned = true;
+                isUpgradeCollected = false;
+            }
+
+            if (isUpgradeSpawned) {
+                DrawRectangleRounded(upgradeRect, 8, 0, GREEN);
+            }
+
             DrawText("o", px, py, 20, WHITE);
             for (int i = 0; i < numAsteroids; i++) {
                 // DrawRectangleRec(asteroids[i].rect, RED);

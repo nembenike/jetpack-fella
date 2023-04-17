@@ -15,9 +15,9 @@ make
 ./jetpack-fella
 ```
 ### TODO:
-- Add upgrades
 - Add store
 - Maybe add some more sprites
+- Fix hitboxes
 - Add build option for windows (someone pr :3)
 
 #### i might approve small changes / improvements
