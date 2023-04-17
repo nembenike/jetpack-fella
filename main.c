@@ -48,10 +48,11 @@ int main(void)
     bool isUpgradeCollected = false;
     int maxFuel = 100;
     int addedFuel = 10;
-    Rectangle upgradeRect = { GetRandomValue(0, screenWidth-20), GetRandomValue(0, screenHeight-20), 20, 20 }; //upgrade
+    Rectangle upgradeRect = { -100, -100, 20, 20 }; //upgrade
 
     // sounds
-    // TODO!! it no worky rn
+    InitAudioDevice();
+    Sound rocketFx = LoadSound("audio/rocket.mp3");
 
     // texture
     Image asteroidImg = LoadImage("image/asteroid.png");
@@ -81,10 +82,18 @@ int main(void)
                 px -= 2;
             }
         }
-        if (IsKeyDown(KEY_SPACE) && fuel > 0){
+        if (IsKeyDown(KEY_SPACE) && !IsKeyDown(KEY_S) && fuel > 0){
             g = 4;
             fuel -= 0.5;
             DrawText("*", px, py+10, 20, RED);
+            PlaySound(rocketFx);
+        }
+
+        if (IsKeyDown(KEY_SPACE) && IsKeyDown(KEY_S) && fuel > 0) {
+            g = -4;
+            fuel -= 0.5;
+            DrawText("*", px, py-10, 20, RED);
+            PlaySound(rocketFx);
         }
         
 
@@ -112,7 +121,11 @@ int main(void)
                                    asteroids[i].rect.width * 0.5f,
                                    asteroids[i].rect.height * 0.5f };
             if (CheckCollisionRecs(playerRect, asteroids[i].hitbox)){
-                fuel -= asteroids[i].rect.width/3;
+                if (fuel - asteroids[i].rect.width/3 > 0) {
+                    fuel -= asteroids[i].rect.width/3;
+                } else {
+                    fuel = 0;
+                }
                 asteroids[i].rect.y = 0;
                 asteroids[i].rect.x = GetRandomValue(0, screenWidth - 50);
                 asteroids[i].rect.width = GetRandomValue(15, score*3);
@@ -252,7 +265,8 @@ int main(void)
 
                 if (IsKeyPressed(KEY_SPACE)) didGameStart = true;
             }
-
+        int fps = GetFPS();
+        DrawText(TextFormat("fps: %i", fps), screenWidth-100, 30, 20, WHITE);
         EndDrawing();
 
         // gravitation
