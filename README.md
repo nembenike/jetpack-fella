@@ -17,6 +17,7 @@ make
 ### TODO:
 - Add store
 - Maybe add some more sprites
+- Implement deltaTime, so the big bois can play on big fps
 - Add build option for windows (someone pr :3)
 
 #### i might approve small changes / improvements
