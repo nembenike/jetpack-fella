@@ -1,4 +1,5 @@
 # jetpack-fella
+# bad code alert bad code alert bad code alert, this needs refactoring (a lot)
 - Simple game written in raylib C
 ### Controls:
 - jump - space
