@@ -22,3 +22,4 @@ make
 - Add build option for windows (someone pr :3)
 
 #### i might approve small changes / improvements
+# this is a test
